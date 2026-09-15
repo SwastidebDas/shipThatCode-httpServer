@@ -2,37 +2,45 @@
 #include <string>
 #include <unordered_set>
 #include <sstream>
+#include <algorithm>
+#include <cctype>
+
+using namespace std;
 
 int main() {
-    std::unordered_set<std::string> methods = {"GET","POST","PUT","DELETE","HEAD","OPTIONS","PATCH"};
-    std::string line;
-    while (std::getline(std::cin, line)) {
-        if (!line.empty() && line.back() == '\r') line.pop_back();
-        if (line.empty()) continue;
-        std::istringstream iss(line);
-        std::string m, p, v, extra;
-        if (!(iss >> m >> p >> v) || (iss >> extra)) { std::cout << "INVALID\n"; continue; }
-        // TODO: validate methods.count(m), p starts with "/", v matches "HTTP/<d>.<d>"
-        if (!methods.count(m) || p.empty() || p[0] != '/' || v.rfind("HTTP/", 0) != 0) {
-            std::cout << "INVALID\n"; continue;
-        }
-        std::string verno=v.substr(5);
-        if(verno.size()!=3||
-        verno[1]!='.'||
-        !isdigit(verno[0])||
-        !isdigit(verno[2])) 
+    
+    string line;
+
+    while(getline(cin, line))
+    {
+        if(!line.empty() && line.back() == '\r')
+        line.pop_back();
+
+        if(line.empty())
+            continue;
+
+        if(line.find(':') == string::npos)
         {
-            std::cout << "INVALID\n"; continue;
+            cout << "ERR malformed: " << line << '\n';
+            continue;
         }
-        int cnt=0;
-        for(auto it:line)
-        {
-            if(it==' ') cnt++;
-        }
-        if(cnt!=2)
-        {
-            std::cout << "INVALID\n"; continue;
-        }
-        std::cout << "METHOD=" << m << " PATH=" << p << " VERSION=" << v << "\n";
+
+        int pos = line.find(':');
+
+        string name = line.substr(0, pos);
+
+        transform(name.begin(), name.end(), name.begin(),
+                  [](unsigned char c) { return tolower(c); });
+
+        string val = line.substr(pos + 1);
+
+        int i = 0;
+
+        while(i < val.size() && val[i] == ' ')
+            i++;
+
+        string actual = val.substr(i);
+
+        cout << name << ": " << actual << '\n';
     }
 }
