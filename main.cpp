@@ -16,6 +16,23 @@ int main() {
         if (!methods.count(m) || p.empty() || p[0] != '/' || v.rfind("HTTP/", 0) != 0) {
             std::cout << "INVALID\n"; continue;
         }
+        std::string verno=v.substr(5);
+        if(verno.size()!=3||
+        verno[1]!='.'||
+        !isdigit(verno[0])||
+        !isdigit(verno[2])) 
+        {
+            std::cout << "INVALID\n"; continue;
+        }
+        int cnt=0;
+        for(auto it:line)
+        {
+            if(it==' ') cnt++;
+        }
+        if(cnt!=2)
+        {
+            std::cout << "INVALID\n"; continue;
+        }
         std::cout << "METHOD=" << m << " PATH=" << p << " VERSION=" << v << "\n";
     }
 }
