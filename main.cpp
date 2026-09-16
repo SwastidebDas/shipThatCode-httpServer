@@ -1,46 +1,32 @@
 #include <iostream>
 #include <string>
-#include <unordered_set>
-#include <sstream>
-#include <algorithm>
-#include <cctype>
-
 using namespace std;
 
-int main() {
-    
+int main()
+{
     string line;
+    string ans = "";
 
     while(getline(cin, line))
     {
-        if(!line.empty() && line.back() == '\r')
-        line.pop_back();
-
         if(line.empty())
             continue;
 
-        if(line.find(':') == string::npos)
+        int num = stoi(line, nullptr, 16);
+
+        if(num == 0)
+            break;
+
+        string data;
+        getline(cin, data);
+
+        for(int i = 0; i < num && i < data.size(); i++)
         {
-            cout << "ERR malformed: " << line << '\n';
-            continue;
+            ans += data[i];
         }
-
-        int pos = line.find(':');
-
-        string name = line.substr(0, pos);
-
-        transform(name.begin(), name.end(), name.begin(),
-                  [](unsigned char c) { return tolower(c); });
-
-        string val = line.substr(pos + 1);
-
-        int i = 0;
-
-        while(i < val.size() && val[i] == ' ')
-            i++;
-
-        string actual = val.substr(i);
-
-        cout << name << ": " << actual << '\n';
     }
+
+    cout << ans << endl;
+
+    return 0;
 }
